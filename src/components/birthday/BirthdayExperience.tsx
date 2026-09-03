@@ -290,8 +290,8 @@ export function BirthdayExperience() {
             className="group relative cursor-pointer outline-none transition-transform duration-300 hover:scale-110 focus-visible:scale-110"
             aria-label="Mở hộp quà"
           >
-            <span className="gift-pulse block text-8xl blur-[1px] transition-all duration-500 group-hover:blur-0 md:text-9xl">
-              🎁
+            <span className="gift-pulse block blur-[2px] transition-all duration-500 group-hover:blur-0">
+              <GiftBox />
             </span>
             <SparkleBurst trigger={burst} />
           </button>
