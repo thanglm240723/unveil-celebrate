@@ -35,11 +35,12 @@ export class BirthdaySong {
     let t = this.ctx.currentTime + 0.05;
     let total = 0;
     for (const [note, beats] of MELODY) {
+      const freq = NOTES[note] ?? 440;
       const dur = beats * beat;
       const osc = this.ctx.createOscillator();
       const env = this.ctx.createGain();
       osc.type = "triangle";
-      osc.frequency.value = NOTES[note];
+      osc.frequency.value = freq;
       env.gain.setValueAtTime(0, t);
       env.gain.linearRampToValueAtTime(1, t + 0.03);
       env.gain.setValueAtTime(1, t + dur - 0.08);
@@ -51,7 +52,7 @@ export class BirthdaySong {
       const osc2 = this.ctx.createOscillator();
       const env2 = this.ctx.createGain();
       osc2.type = "sine";
-      osc2.frequency.value = NOTES[note] * 2;
+      osc2.frequency.value = freq * 2;
       env2.gain.setValueAtTime(0, t);
       env2.gain.linearRampToValueAtTime(0.25, t + 0.03);
       env2.gain.linearRampToValueAtTime(0, t + dur);

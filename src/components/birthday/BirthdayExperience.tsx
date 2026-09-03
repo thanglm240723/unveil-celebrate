@@ -68,7 +68,7 @@ function useFireworks(active: boolean) {
     window.addEventListener("resize", resize);
 
     const explode = (x: number, y: number) => {
-      const color = FIREWORK_COLORS[Math.floor(Math.random() * FIREWORK_COLORS.length)];
+      const color = FIREWORK_COLORS[Math.floor(Math.random() * FIREWORK_COLORS.length)] ?? "#ffd166";
       const count = 60 + Math.floor(Math.random() * 40);
       for (let i = 0; i < count; i++) {
         const angle = (Math.PI * 2 * i) / count + Math.random() * 0.2;
