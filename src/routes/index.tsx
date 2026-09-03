@@ -1,24 +1,33 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useEffect } from "react";
+import { BirthdayExperience } from "@/components/birthday/BirthdayExperience";
 
-// No head() here: the home route inherits title/description/og/twitter from
-// __root.tsx, and ships no og:image so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
 export const Route = createFileRoute("/")({
+  head: () => ({
+    meta: [
+      { title: "Chúc Mừng Sinh Nhật Nguyễn Thị Phượng!" },
+      {
+        name: "description",
+        content:
+          "Một bất ngờ sinh nhật dành riêng cho Nguyễn Thị Phượng — pháo hoa, bóng bay, bánh kem và một điều ước gửi đến vũ trụ.",
+      },
+      { property: "og:title", content: "Chúc Mừng Sinh Nhật Nguyễn Thị Phượng!" },
+      {
+        property: "og:description",
+        content: "Mở hộp quà và khám phá bất ngờ sinh nhật dành riêng cho bạn!",
+      },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
   component: Index,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
 function Index() {
-  return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
-    </div>
-  );
+  useEffect(() => {
+    document.documentElement.classList.add("birthday-theme");
+    return () => document.documentElement.classList.remove("birthday-theme");
+  }, []);
+
+  return <BirthdayExperience />;
 }
