@@ -7,6 +7,36 @@ const HEADLINE = `CHÚC MỪNG SINH NHẬT ${NAME.toUpperCase()}!`;
 
 type Stage = "unveiling" | "question" | "revelation" | "celebration";
 
+function GiftBox() {
+  return (
+    <svg viewBox="0 0 120 120" width="130" height="130" role="img" aria-label="Hộp quà">
+      <defs>
+        <linearGradient id="gift-body" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="oklch(0.72 0.16 350)" />
+          <stop offset="100%" stopColor="oklch(0.58 0.18 350)" />
+        </linearGradient>
+        <linearGradient id="gift-lid" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="oklch(0.8 0.14 350)" />
+          <stop offset="100%" stopColor="oklch(0.66 0.17 350)" />
+        </linearGradient>
+      </defs>
+      {/* glow */}
+      <circle cx="60" cy="62" r="52" fill="oklch(0.85 0.14 88)" opacity="0.12" />
+      {/* box */}
+      <rect x="22" y="52" width="76" height="52" rx="6" fill="url(#gift-body)" />
+      <rect x="16" y="38" width="88" height="20" rx="6" fill="url(#gift-lid)" />
+      {/* ribbon */}
+      <rect x="54" y="38" width="12" height="66" fill="oklch(0.87 0.14 88)" />
+      {/* bow */}
+      <path d="M60 38 C46 22 30 26 34 36 C37 44 52 42 60 38 Z" fill="oklch(0.87 0.14 88)" />
+      <path d="M60 38 C74 22 90 26 86 36 C83 44 68 42 60 38 Z" fill="oklch(0.87 0.14 88)" />
+      <circle cx="60" cy="38" r="6" fill="oklch(0.93 0.1 90)" />
+      {/* shine */}
+      <rect x="28" y="58" width="6" height="40" rx="3" fill="#ffffff" opacity="0.18" />
+    </svg>
+  );
+}
+
 /* ---------------- Fireworks canvas ---------------- */
 
 interface Particle {
