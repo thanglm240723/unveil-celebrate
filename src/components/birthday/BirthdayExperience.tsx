@@ -5,7 +5,7 @@ import { BirthdaySong } from "@/lib/birthday-music";
 const NAME = "Nguyễn Thị Phượng";
 const HEADLINE = `CHÚC MỪNG SINH NHẬT ${NAME.toUpperCase()}!`;
 
-type Stage = "unveiling" | "question" | "revelation" | "celebration";
+type Stage = "unveiling" | "question" | "revelation" | "celebration" | "letter";
 
 function GiftBox() {
   return (
@@ -232,6 +232,7 @@ export function BirthdayExperience() {
   const [wish, setWish] = useState("");
   const [wishSent, setWishSent] = useState(false);
   const [blown, setBlown] = useState(false);
+  const [letterOpen, setLetterOpen] = useState(false);
   const songRef = useRef<BirthdaySong | null>(null);
   const fireworksRef = useFireworks(stage === "revelation" || (stage === "celebration" && wishSent));
 
@@ -269,14 +270,21 @@ export function BirthdayExperience() {
     setBlown(true);
   }, [wish, wishSent]);
 
+  const enterLetter = useCallback(() => {
+    songRef.current?.stop();
+    setStage("letter");
+  }, []);
+
   return (
-    <main className="relative min-h-screen overflow-hidden bg-background text-foreground">
+    <main className={`relative min-h-screen bg-background text-foreground ${stage === "letter" ? "overflow-y-auto" : "overflow-hidden"}`}>
       {/* ambient glow */}
-      <div className="pointer-events-none absolute inset-0" aria-hidden>
-        <div className="absolute -top-32 left-1/2 h-96 w-[42rem] -translate-x-1/2 rounded-full bg-glow opacity-60 blur-3xl" />
-        <div className="absolute bottom-0 left-1/4 h-72 w-72 rounded-full bg-glow-rose opacity-50 blur-3xl" />
-        <div className="absolute right-1/4 top-1/3 h-64 w-64 rounded-full bg-glow-gold opacity-40 blur-3xl" />
-      </div>
+      {stage !== "letter" && (
+        <div className="pointer-events-none absolute inset-0" aria-hidden>
+          <div className="absolute -top-32 left-1/2 h-96 w-[42rem] -translate-x-1/2 rounded-full bg-glow opacity-60 blur-3xl" />
+          <div className="absolute bottom-0 left-1/4 h-72 w-72 rounded-full bg-glow-rose opacity-50 blur-3xl" />
+          <div className="absolute right-1/4 top-1/3 h-64 w-64 rounded-full bg-glow-gold opacity-40 blur-3xl" />
+        </div>
+      )}
 
       {/* ---------- Stage 1: The Unveiling ---------- */}
       {stage === "unveiling" && (
@@ -424,7 +432,64 @@ export function BirthdayExperience() {
                 </p>
               </div>
               <p className="text-sm text-muted-foreground">Sinh nhật vui vẻ nhé, {NAME}! 🎈</p>
+              <button
+                type="button"
+                onClick={enterLetter}
+                className="letter-invitation mt-4 border-b border-primary/50 pb-1 font-display text-lg text-primary transition-colors hover:border-primary hover:text-foreground"
+              >
+                Vẫn còn một điều cuối cùng dành cho Phượng
+                <span className="ml-2" aria-hidden>→</span>
+              </button>
             </div>
+          )}
+        </section>
+      )}
+
+      {/* ---------- Stage 4: The Letter ---------- */}
+      {stage === "letter" && (
+        <section className="letter-scene relative z-10 flex min-h-screen flex-col items-center justify-center px-5 py-14 text-center">
+          {!letterOpen ? (
+            <div className="letter-arrival flex flex-col items-center">
+              <p className="mb-8 font-display text-lg text-letter-muted">Có những điều nên được nói thật chậm.</p>
+              <button
+                type="button"
+                onClick={() => setLetterOpen(true)}
+                className="envelope group relative block h-48 w-72 cursor-pointer border-0 bg-transparent p-0 outline-none focus-visible:ring-2 focus-visible:ring-letter-accent sm:h-56 sm:w-80"
+                aria-label="Mở phong bì"
+              >
+                <span className="envelope-back absolute inset-x-0 bottom-0 h-[72%]" />
+                <span className="envelope-letter-peek absolute inset-x-8 bottom-5 h-32" />
+                <span className="envelope-flap absolute inset-x-0 top-[28%] h-[45%] origin-top transition-transform duration-700 group-hover:-translate-y-1" />
+                <span className="wax-seal absolute left-1/2 top-[58%] z-20 flex h-14 w-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full font-display text-xl text-letter-cream shadow-lg">P</span>
+              </button>
+              <p className="mt-7 text-sm text-letter-muted">Chạm vào niêm sáp để mở thư</p>
+            </div>
+          ) : (
+            <article className="letter-paper letter-unfold relative w-full max-w-2xl px-7 py-10 text-left sm:px-14 sm:py-14">
+              <div className="paper-fold paper-fold-vertical" aria-hidden />
+              <div className="paper-fold paper-fold-horizontal" aria-hidden />
+              <p className="handwritten letter-line letter-line-one text-xl sm:text-2xl">Phượng thân mến,</p>
+              <p className="handwritten letter-line letter-line-two mt-6 text-lg leading-8 sm:text-xl sm:leading-9">
+                Có thể hôm nay sẽ có rất nhiều lời chúc dành cho Phượng. Nhưng mình vẫn mong lá thư nhỏ này sẽ là một khoảng lặng — để Phượng biết rằng sự hiện diện của Phượng luôn là một điều rất đáng quý.
+              </p>
+              <p className="handwritten letter-line letter-line-three mt-5 text-lg leading-8 sm:text-xl sm:leading-9">
+                Mong tuổi mới không bắt Phượng phải trở thành một ai khác. Chỉ mong Phượng vẫn dịu dàng với chính mình, vẫn can đảm đi về phía điều mình yêu, và luôn có người ở bên trong cả những ngày rực rỡ lẫn những ngày chẳng dễ dàng.
+              </p>
+              <p className="handwritten letter-line letter-line-four mt-5 text-lg leading-8 sm:text-xl sm:leading-9">
+                Cảm ơn Phượng vì đã có mặt trên đời. Chúc cho điều ước vừa gửi đi sẽ tìm được đường quay về — dưới hình hài đẹp nhất.
+              </p>
+              <p className="handwritten letter-line letter-signature mt-8 text-right text-xl sm:text-2xl">
+                Sinh nhật thật bình yên nhé.<br />
+                <span className="text-base">— Một người luôn mong Phượng hạnh phúc</span>
+              </p>
+              <figure className="polaroid-drop mt-10 ml-auto w-40 rotate-3 bg-letter-photo p-2 pb-7 shadow-xl sm:absolute sm:-right-8 sm:bottom-8 sm:mt-0 sm:w-44">
+                <div className="flex aspect-square items-center justify-center border border-letter-line bg-letter-placeholder px-3 text-center text-xs text-letter-muted">
+                  Ảnh kỷ niệm<br />của chúng mình
+                </div>
+                <figcaption className="handwritten mt-2 text-center text-sm text-letter-ink">Một ngày đáng nhớ</figcaption>
+                <span className="photo-pin absolute -top-2 left-1/2 h-4 w-4 -translate-x-1/2 rounded-full" aria-hidden />
+              </figure>
+            </article>
           )}
         </section>
       )}
