@@ -138,6 +138,13 @@
   --color-glow: var(--glow);
   --color-glow-rose: var(--glow-rose);
   --color-glow-gold: var(--glow-gold);
+  --color-letter-cream: var(--letter-cream);
+  --color-letter-ink: var(--letter-ink);
+  --color-letter-muted: var(--letter-muted);
+  --color-letter-accent: var(--letter-accent);
+  --color-letter-line: var(--letter-line);
+  --color-letter-photo: var(--letter-photo);
+  --color-letter-placeholder: var(--letter-placeholder);
   --font-display: "Playfair Display", "Be Vietnam Pro", serif;
   --font-sans: "Be Vietnam Pro", system-ui, sans-serif;
 }
@@ -167,6 +174,13 @@
   --glow: radial-gradient(circle, oklch(0.5 0.12 310 / 35%) 0%, transparent 70%);
   --glow-rose: radial-gradient(circle, oklch(0.6 0.16 350 / 30%) 0%, transparent 70%);
   --glow-gold: radial-gradient(circle, oklch(0.75 0.14 88 / 22%) 0%, transparent 70%);
+  --letter-cream: oklch(0.93 0.035 83);
+  --letter-ink: oklch(0.28 0.035 48);
+  --letter-muted: oklch(0.59 0.035 56);
+  --letter-accent: oklch(0.43 0.11 22);
+  --letter-line: oklch(0.7 0.035 72 / 42%);
+  --letter-photo: oklch(0.97 0.012 87);
+  --letter-placeholder: oklch(0.86 0.025 74);
 }
 
 @layer base {
@@ -342,6 +356,87 @@
   animation-iteration-count: infinite;
 }
 
+/* ---------- Quiet closing letter ---------- */
+.letter-scene {
+  color: var(--letter-ink);
+  background:
+    radial-gradient(circle at 50% 12%, oklch(0.97 0.025 82 / 45%), transparent 36%),
+    linear-gradient(180deg, oklch(0.2 0.025 39), oklch(0.13 0.018 35));
+}
+
+.letter-arrival { animation: letter-arrive 1.4s ease both; }
+
+@keyframes letter-arrive {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.envelope { filter: drop-shadow(0 22px 28px oklch(0.08 0.015 30 / 55%)); }
+.envelope-back {
+  border: 1px solid oklch(0.67 0.08 58);
+  border-radius: 4px;
+  background: oklch(0.77 0.09 60);
+}
+.envelope-letter-peek {
+  border-radius: 3px;
+  background: var(--letter-cream);
+}
+.envelope-flap {
+  z-index: 10;
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  background: linear-gradient(165deg, oklch(0.87 0.07 68), oklch(0.72 0.1 55));
+  filter: drop-shadow(0 4px 2px oklch(0.34 0.04 43 / 22%));
+}
+.envelope::after {
+  content: "";
+  position: absolute;
+  z-index: 5;
+  inset: 28% 0 0;
+  clip-path: polygon(0 0, 50% 58%, 100% 0, 100% 100%, 0 100%);
+  border-radius: 4px;
+  background: linear-gradient(145deg, oklch(0.81 0.085 64), oklch(0.72 0.09 57));
+}
+.wax-seal {
+  background: radial-gradient(circle at 36% 30%, oklch(0.58 0.15 25), var(--letter-accent) 58%, oklch(0.34 0.1 25));
+  border: 3px double oklch(0.65 0.14 30);
+}
+
+.letter-paper {
+  min-height: 38rem;
+  color: var(--letter-ink);
+  background-color: var(--letter-cream);
+  background-image: repeating-linear-gradient(0deg, transparent 0 31px, var(--letter-line) 32px);
+  border: 1px solid oklch(0.74 0.045 70);
+  border-radius: 2px;
+  box-shadow: 0 24px 70px oklch(0.07 0.02 35 / 55%);
+}
+.letter-unfold { transform-origin: center top; animation: letter-unfold 1.15s cubic-bezier(0.2, 0.75, 0.25, 1) both; }
+@keyframes letter-unfold {
+  0% { opacity: 0; transform: translateY(90px) scaleY(0.18); }
+  45% { opacity: 1; transform: translateY(20px) scaleY(0.72); }
+  100% { opacity: 1; transform: translateY(0) scaleY(1); }
+}
+.paper-fold { position: absolute; pointer-events: none; background: linear-gradient(90deg, transparent, oklch(0.55 0.03 65 / 18%), transparent); }
+.paper-fold-vertical { inset-block: 0; left: 50%; width: 22px; transform: translateX(-50%); }
+.paper-fold-horizontal { inset-inline: 0; top: 50%; height: 18px; transform: translateY(-50%) rotate(90deg); }
+.handwritten { font-family: "Playfair Display", "Be Vietnam Pro", serif; letter-spacing: 0; }
+.letter-line { opacity: 0; animation: letter-writing 1.05s ease forwards; }
+.letter-line-one { animation-delay: 0.8s; }
+.letter-line-two { animation-delay: 1.7s; }
+.letter-line-three { animation-delay: 3.1s; }
+.letter-line-four { animation-delay: 4.5s; }
+.letter-signature { animation-delay: 5.7s; }
+@keyframes letter-writing {
+  from { opacity: 0; transform: translateY(7px); filter: blur(2px); }
+  to { opacity: 1; transform: translateY(0); filter: blur(0); }
+}
+.polaroid-drop { position: relative; opacity: 0; animation: polaroid-drop 0.9s 6.8s cubic-bezier(0.2, 0.85, 0.32, 1.2) forwards; }
+@keyframes polaroid-drop {
+  from { opacity: 0; transform: translateY(-70px) rotate(-8deg) scale(1.08); }
+  to { opacity: 1; transform: translateY(0) rotate(3deg) scale(1); }
+}
+.photo-pin { background: var(--letter-accent); box-shadow: 0 2px 4px oklch(0.25 0.04 30 / 45%); }
+
 @keyframes flame-flicker {
   0%, 100% { transform: scale(1) rotate(-2deg); }
   30% { transform: scale(1.12, 0.92) rotate(3deg); }
@@ -380,5 +475,12 @@
   .starry-sky::after,
   .shooting-star {
     animation: none;
+  }
+  .letter-arrival,
+  .letter-unfold,
+  .letter-line,
+  .polaroid-drop {
+    animation-duration: 0.01ms;
+    animation-delay: 0s;
   }
 }
