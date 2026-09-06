@@ -213,6 +213,78 @@
 }
 .gift-pulse { animation: gift-pulse 2.4s ease-in-out infinite; }
 
+/* Layered star field used only on the opening screen */
+.starry-sky,
+.starry-sky::before,
+.starry-sky::after {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.starry-sky {
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 42%, oklch(0.31 0.1 283 / 36%), transparent 34%),
+    linear-gradient(180deg, oklch(0.1 0.035 274), oklch(0.15 0.06 292) 68%, oklch(0.12 0.045 280));
+}
+
+.starry-sky::before {
+  content: "";
+  background-image:
+    radial-gradient(circle, oklch(0.98 0.02 95) 0 1px, transparent 1.5px),
+    radial-gradient(circle, oklch(0.88 0.06 255) 0 1.2px, transparent 1.8px),
+    radial-gradient(circle, oklch(0.95 0.07 90) 0 0.8px, transparent 1.4px);
+  background-position: 12px 18px, 52px 78px, 18px 54px;
+  background-size: 73px 79px, 113px 127px, 47px 59px;
+  opacity: 0.72;
+  animation: stars-twinkle 5s ease-in-out infinite alternate;
+}
+
+.starry-sky::after {
+  content: "";
+  background-image:
+    radial-gradient(circle, oklch(1 0 0) 0 1.5px, transparent 2px),
+    radial-gradient(circle, oklch(0.9 0.08 90) 0 1px, transparent 1.8px);
+  background-position: 30px 42px, 76px 22px;
+  background-size: 157px 173px, 191px 149px;
+  filter: drop-shadow(0 0 4px oklch(0.95 0.04 90 / 70%));
+  opacity: 0.55;
+  animation: stars-twinkle 3.2s 0.8s ease-in-out infinite alternate-reverse;
+}
+
+@keyframes stars-twinkle {
+  from { opacity: 0.38; transform: scale(1); }
+  to { opacity: 0.82; transform: scale(1.015); }
+}
+
+.shooting-star {
+  position: absolute;
+  z-index: 1;
+  top: 18%;
+  left: -25%;
+  width: 7rem;
+  height: 1px;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, transparent, oklch(0.98 0.04 95));
+  filter: drop-shadow(0 0 5px oklch(0.95 0.06 95 / 80%));
+  opacity: 0;
+  transform: rotate(-18deg);
+  animation: shooting-star 7s 1.4s ease-in infinite;
+}
+
+.shooting-star-two {
+  top: 62%;
+  animation-delay: 4.8s;
+  animation-duration: 9s;
+}
+
+@keyframes shooting-star {
+  0%, 72% { opacity: 0; transform: translateX(0) translateY(0) rotate(-18deg); }
+  75% { opacity: 0.9; }
+  88%, 100% { opacity: 0; transform: translateX(145vw) translateY(42vh) rotate(-18deg); }
+}
+
 @keyframes sparkle-fly {
   0% { opacity: 1; transform: translate(-50%, -50%) scale(0.4); }
   100% { opacity: 0; transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(1.4); }
@@ -301,4 +373,12 @@
   vertical-align: -0.08em;
   background: var(--gold);
   animation: caret-blink 0.9s steps(1) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .starry-sky::before,
+  .starry-sky::after,
+  .shooting-star {
+    animation: none;
+  }
 }

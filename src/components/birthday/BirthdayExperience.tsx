@@ -281,13 +281,17 @@ export function BirthdayExperience() {
       {/* ---------- Stage 1: The Unveiling ---------- */}
       {stage === "unveiling" && (
         <section className="relative z-10 flex min-h-screen flex-col items-center justify-center px-6 text-center">
-          <p className="fade-in mb-8 text-sm uppercase tracking-[0.35em] text-muted-foreground">
+          <div className="starry-sky" aria-hidden>
+            <span className="shooting-star shooting-star-one" />
+            <span className="shooting-star shooting-star-two" />
+          </div>
+          <p className="fade-in relative z-10 mb-8 text-sm uppercase tracking-[0.35em] text-muted-foreground">
             Có một điều bất ngờ dành cho bạn…
           </p>
           <button
             type="button"
             onClick={openGift}
-            className="group relative cursor-pointer outline-none transition-transform duration-300 hover:scale-110 focus-visible:scale-110"
+            className="group relative z-10 cursor-pointer outline-none transition-transform duration-300 hover:scale-110 focus-visible:scale-110"
             aria-label="Mở hộp quà"
           >
             <span className="gift-pulse block blur-[2px] transition-all duration-500 group-hover:blur-0">
@@ -295,7 +299,7 @@ export function BirthdayExperience() {
             </span>
             <SparkleBurst trigger={burst} />
           </button>
-          <p className="fade-in mt-10 text-muted-foreground">Chạm vào hộp quà để mở màn ✨</p>
+          <p className="fade-in relative z-10 mt-10 text-muted-foreground">Chạm vào hộp quà để mở màn ✨</p>
         </section>
       )}
 
