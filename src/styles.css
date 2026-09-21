@@ -484,3 +484,37 @@
     animation-delay: 0s;
   }
 }
+
+/* ---------- Hoa phượng (flamboyant blossoms) ---------- */
+@keyframes phuong-fall {
+  0% { transform: translate3d(0, -12vh, 0) rotate(0deg); opacity: 0; }
+  8% { opacity: 1; }
+  35% { transform: translate3d(28px, 28vh, 0) rotate(120deg); }
+  70% { transform: translate3d(-26px, 66vh, 0) rotate(250deg); }
+  100% { transform: translate3d(14px, 108vh, 0) rotate(400deg); opacity: 0; }
+}
+@keyframes phuong-sway {
+  0%, 100% { transform: translateX(-10px); }
+  50% { transform: translateX(10px); }
+}
+.phuong-layer {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 5;
+}
+.phuong-sway {
+  position: absolute;
+  top: 0;
+  animation-name: phuong-sway;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+.phuong-blossom {
+  display: block;
+  animation-name: phuong-fall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  filter: drop-shadow(0 2px 4px oklch(0.3 0.12 25 / 35%));
+}
