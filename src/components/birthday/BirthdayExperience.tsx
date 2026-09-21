@@ -1,6 +1,7 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Cake } from "./Cake";
 import { BirthdaySong } from "@/lib/birthday-music";
+import phuongPhoto from "@/assets/phuong.png.asset.json";
 
 const NAME = "Nguyễn Thị Phượng";
 const HEADLINE = `CHÚC MỪNG SINH NHẬT ${NAME.toUpperCase()}!`;
