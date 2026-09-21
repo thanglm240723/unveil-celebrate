@@ -1,6 +1,7 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Cake } from "./Cake";
 import { BirthdaySong } from "@/lib/birthday-music";
+import phuongPhoto from "@/assets/phuong.png.asset.json";
 
 const NAME = "Nguyễn Thị Phượng";
 const HEADLINE = `CHÚC MỪNG SINH NHẬT ${NAME.toUpperCase()}!`;
@@ -196,6 +197,65 @@ function Confetti() {
   );
 }
 
+/* ---------------- Hoa phượng ---------------- */
+
+function PhuongFlower({ size, tone }: { size: number; tone: string }) {
+  return (
+    <svg viewBox="0 0 40 40" width={size} height={size} aria-hidden>
+      <g>
+        {[0, 72, 144, 216].map((deg) => (
+          <ellipse
+            key={deg}
+            cx="20"
+            cy="11"
+            rx="6.5"
+            ry="9.5"
+            fill={tone}
+            transform={`rotate(${deg} 20 20)`}
+          />
+        ))}
+        <ellipse cx="20" cy="11" rx="5.5" ry="9" fill="#fff2d6" opacity="0.85" transform="rotate(288 20 20)" />
+        <circle cx="20" cy="20" r="3" fill="#ffd166" />
+      </g>
+    </svg>
+  );
+}
+
+const PHUONG_TONES = ["#e63946", "#ff4d4d", "#d62828", "#ff6b6b", "#c1121f"];
+
+function PhuongBlossoms({ count = 16, soft = false }: { count?: number; soft?: boolean }) {
+  const items = useMemo(
+    () =>
+      Array.from({ length: count }, (_, i) => ({
+        left: (i * 100) / count + Math.random() * 5,
+        delay: Math.random() * 12,
+        duration: 11 + Math.random() * 10,
+        sway: 3 + Math.random() * 3,
+        size: 16 + Math.random() * 18,
+        tone: PHUONG_TONES[i % PHUONG_TONES.length] ?? "#e63946",
+      })),
+    [count],
+  );
+  return (
+    <div className="phuong-layer" style={soft ? { opacity: 0.55 } : undefined} aria-hidden>
+      {items.map((f, i) => (
+        <span
+          key={i}
+          className="phuong-sway"
+          style={{ left: `${f.left}%`, animationDuration: `${f.sway}s`, animationDelay: `${f.delay / 2}s` }}
+        >
+          <span
+            className="phuong-blossom"
+            style={{ animationDelay: `${f.delay}s`, animationDuration: `${f.duration}s` }}
+          >
+            <PhuongFlower size={f.size} tone={f.tone} />
+          </span>
+        </span>
+      ))}
+    </div>
+  );
+}
+
 /* ---------------- Sparkle burst for gift ---------------- */
 
 function SparkleBurst({ trigger }: { trigger: number }) {
@@ -277,6 +337,9 @@ export function BirthdayExperience() {
 
   return (
     <main className={`relative min-h-screen bg-background text-foreground ${stage === "letter" ? "overflow-y-auto" : "overflow-hidden"}`}>
+      {/* hoa phượng rơi */}
+      <PhuongBlossoms count={stage === "letter" ? 8 : 16} soft={stage === "letter"} />
+
       {/* ambient glow */}
       {stage !== "letter" && (
         <div className="pointer-events-none absolute inset-0" aria-hidden>
@@ -483,10 +546,13 @@ export function BirthdayExperience() {
                 <span className="text-base">— Một người luôn mong Phượng hạnh phúc</span>
               </p>
               <figure className="polaroid-drop mt-10 ml-auto w-40 rotate-3 bg-letter-photo p-2 pb-7 shadow-xl sm:absolute sm:-right-8 sm:bottom-8 sm:mt-0 sm:w-44">
-                <div className="flex aspect-square items-center justify-center border border-letter-line bg-letter-placeholder px-3 text-center text-xs text-letter-muted">
-                  Ảnh kỷ niệm<br />của chúng mình
-                </div>
-                <figcaption className="handwritten mt-2 text-center text-sm text-letter-ink">Một ngày đáng nhớ</figcaption>
+                <img
+                  src={phuongPhoto.url}
+                  alt="Ảnh của Phượng"
+                  className="aspect-square w-full border border-letter-line object-cover"
+                  loading="lazy"
+                />
+                <figcaption className="handwritten mt-2 text-center text-sm text-letter-ink">Phượng của ngày hôm nay 🌺</figcaption>
                 <span className="photo-pin absolute -top-2 left-1/2 h-4 w-4 -translate-x-1/2 rounded-full" aria-hidden />
               </figure>
             </article>
