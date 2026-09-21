@@ -197,6 +197,65 @@ function Confetti() {
   );
 }
 
+/* ---------------- Hoa phượng ---------------- */
+
+function PhuongFlower({ size, tone }: { size: number; tone: string }) {
+  return (
+    <svg viewBox="0 0 40 40" width={size} height={size} aria-hidden>
+      <g>
+        {[0, 72, 144, 216].map((deg) => (
+          <ellipse
+            key={deg}
+            cx="20"
+            cy="11"
+            rx="6.5"
+            ry="9.5"
+            fill={tone}
+            transform={`rotate(${deg} 20 20)`}
+          />
+        ))}
+        <ellipse cx="20" cy="11" rx="5.5" ry="9" fill="#fff2d6" opacity="0.85" transform="rotate(288 20 20)" />
+        <circle cx="20" cy="20" r="3" fill="#ffd166" />
+      </g>
+    </svg>
+  );
+}
+
+const PHUONG_TONES = ["#e63946", "#ff4d4d", "#d62828", "#ff6b6b", "#c1121f"];
+
+function PhuongBlossoms({ count = 16, soft = false }: { count?: number; soft?: boolean }) {
+  const items = useMemo(
+    () =>
+      Array.from({ length: count }, (_, i) => ({
+        left: (i * 100) / count + Math.random() * 5,
+        delay: Math.random() * 12,
+        duration: 11 + Math.random() * 10,
+        sway: 3 + Math.random() * 3,
+        size: 16 + Math.random() * 18,
+        tone: PHUONG_TONES[i % PHUONG_TONES.length] ?? "#e63946",
+      })),
+    [count],
+  );
+  return (
+    <div className="phuong-layer" style={soft ? { opacity: 0.55 } : undefined} aria-hidden>
+      {items.map((f, i) => (
+        <span
+          key={i}
+          className="phuong-sway"
+          style={{ left: `${f.left}%`, animationDuration: `${f.sway}s`, animationDelay: `${f.delay / 2}s` }}
+        >
+          <span
+            className="phuong-blossom"
+            style={{ animationDelay: `${f.delay}s`, animationDuration: `${f.duration}s` }}
+          >
+            <PhuongFlower size={f.size} tone={f.tone} />
+          </span>
+        </span>
+      ))}
+    </div>
+  );
+}
+
 /* ---------------- Sparkle burst for gift ---------------- */
 
 function SparkleBurst({ trigger }: { trigger: number }) {
