@@ -337,6 +337,9 @@ export function BirthdayExperience() {
 
   return (
     <main className={`relative min-h-screen bg-background text-foreground ${stage === "letter" ? "overflow-y-auto" : "overflow-hidden"}`}>
+      {/* hoa phượng rơi */}
+      <PhuongBlossoms count={stage === "letter" ? 8 : 16} soft={stage === "letter"} />
+
       {/* ambient glow */}
       {stage !== "letter" && (
         <div className="pointer-events-none absolute inset-0" aria-hidden>
