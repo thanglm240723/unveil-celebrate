@@ -546,10 +546,13 @@ export function BirthdayExperience() {
                 <span className="text-base">— Một người luôn mong Phượng hạnh phúc</span>
               </p>
               <figure className="polaroid-drop mt-10 ml-auto w-40 rotate-3 bg-letter-photo p-2 pb-7 shadow-xl sm:absolute sm:-right-8 sm:bottom-8 sm:mt-0 sm:w-44">
-                <div className="flex aspect-square items-center justify-center border border-letter-line bg-letter-placeholder px-3 text-center text-xs text-letter-muted">
-                  Ảnh kỷ niệm<br />của chúng mình
-                </div>
-                <figcaption className="handwritten mt-2 text-center text-sm text-letter-ink">Một ngày đáng nhớ</figcaption>
+                <img
+                  src={phuongPhoto.url}
+                  alt="Ảnh của Phượng"
+                  className="aspect-square w-full border border-letter-line object-cover"
+                  loading="lazy"
+                />
+                <figcaption className="handwritten mt-2 text-center text-sm text-letter-ink">Phượng của ngày hôm nay 🌺</figcaption>
                 <span className="photo-pin absolute -top-2 left-1/2 h-4 w-4 -translate-x-1/2 rounded-full" aria-hidden />
               </figure>
             </article>
