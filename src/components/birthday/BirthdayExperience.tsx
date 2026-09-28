@@ -1,47 +1,33 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { LockKeyhole } from "lucide-react";
 import { Cake } from "./Cake";
+import { GiftBox } from "./GiftBox";
+import { Letter } from "./Letter";
+import { NightSky } from "./NightSky";
+import { PetalGust, Petals } from "./Petals";
+import { PhuongBloomIcon, PhuongBranch } from "./PhuongBranch";
 import { BirthdaySong } from "@/lib/birthday-music";
 
 const NAME = "Nguyễn Thị Phượng";
+const SHORT_NAME = "Phượng";
 const HEADLINE = `CHÚC MỪNG SINH NHẬT ${NAME.toUpperCase()}!`;
 
-type Stage = "unveiling" | "question" | "revelation" | "celebration";
+type Stage = "unveiling" | "question" | "revelation" | "celebration" | "wishCelebration" | "letter";
 
-function GiftBox() {
-  return (
-    <svg viewBox="0 0 120 120" width="130" height="130" role="img" aria-label="Hộp quà">
-      <defs>
-        <linearGradient id="gift-body" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="oklch(0.72 0.16 350)" />
-          <stop offset="100%" stopColor="oklch(0.58 0.18 350)" />
-        </linearGradient>
-        <linearGradient id="gift-lid" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="oklch(0.8 0.14 350)" />
-          <stop offset="100%" stopColor="oklch(0.66 0.17 350)" />
-        </linearGradient>
-      </defs>
-      {/* glow */}
-      <circle cx="60" cy="62" r="52" fill="oklch(0.85 0.14 88)" opacity="0.12" />
-      {/* box */}
-      <rect x="22" y="52" width="76" height="52" rx="6" fill="url(#gift-body)" />
-      <rect x="16" y="38" width="88" height="20" rx="6" fill="url(#gift-lid)" />
-      {/* ribbon */}
-      <rect x="54" y="38" width="12" height="66" fill="oklch(0.87 0.14 88)" />
-      {/* bow */}
-      <path d="M60 38 C46 22 30 26 34 36 C37 44 52 42 60 38 Z" fill="oklch(0.87 0.14 88)" />
-      <path d="M60 38 C74 22 90 26 86 36 C83 44 68 42 60 38 Z" fill="oklch(0.87 0.14 88)" />
-      <circle cx="60" cy="38" r="6" fill="oklch(0.93 0.1 90)" />
-      {/* shine */}
-      <rect x="28" y="58" width="6" height="40" rx="3" fill="#ffffff" opacity="0.18" />
-    </svg>
-  );
-}
+/** Các bước trong màn bánh: gõ điều ước → chờ chạm bánh → nến vừa tắt. */
+type CakePhase = "writing" | "readyToBlow" | "blowing";
 
 /* ---------------- Fireworks canvas ---------------- */
 
 interface Particle {
-  x: number; y: number; vx: number; vy: number;
-  life: number; maxLife: number; color: string; size: number;
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  life: number;
+  maxLife: number;
+  color: string;
+  size: number;
 }
 
 const FIREWORK_COLORS = ["#ffd166", "#ff5d8f", "#7bdff2", "#c77dff", "#95e06c", "#ff9e6d"];
@@ -68,13 +54,15 @@ function useFireworks(active: boolean) {
     window.addEventListener("resize", resize);
 
     const explode = (x: number, y: number) => {
-      const color = FIREWORK_COLORS[Math.floor(Math.random() * FIREWORK_COLORS.length)] ?? "#ffd166";
+      const color =
+        FIREWORK_COLORS[Math.floor(Math.random() * FIREWORK_COLORS.length)] ?? "#ffd166";
       const count = 60 + Math.floor(Math.random() * 40);
       for (let i = 0; i < count; i++) {
         const angle = (Math.PI * 2 * i) / count + Math.random() * 0.2;
         const speed = (2 + Math.random() * 3.5) * dpr;
         particles.push({
-          x, y,
+          x,
+          y,
           vx: Math.cos(angle) * speed,
           vy: Math.sin(angle) * speed,
           life: 0,
@@ -86,15 +74,19 @@ function useFireworks(active: boolean) {
     };
 
     const launch = () => {
-      const w = canvas.width, h = canvas.height;
+      const w = canvas.width,
+        h = canvas.height;
       explode(w * (0.15 + Math.random() * 0.7), h * (0.12 + Math.random() * 0.4));
     };
 
     launch();
-    const burstInterval = window.setInterval(launch, 650);
+    // pháo hoa bắn dồn 7 giây đầu rồi thưa dần. Phải gán lại vào cùng một biến
+    // thì cleanup mới clear được cái đang chạy — trước đây interval thứ hai
+    // không ai giữ id nên nó bắn mãi kể cả sau khi component đã unmount.
+    let burstInterval = window.setInterval(launch, 650);
     const calmDown = window.setTimeout(() => {
       window.clearInterval(burstInterval);
-      window.setInterval(launch, 2600);
+      burstInterval = window.setInterval(launch, 2600);
     }, 7000);
 
     const tick = () => {
@@ -222,18 +214,61 @@ function SparkleBurst({ trigger }: { trigger: number }) {
   );
 }
 
+/* ---------------- Music toggle ---------------- */
+
+function MusicToggle({ on, onToggle }: { on: boolean; onToggle: () => void }) {
+  return (
+    <button
+      type="button"
+      onClick={onToggle}
+      aria-label={on ? "Tắt nhạc" : "Bật nhạc"}
+      aria-pressed={on}
+      className="fixed right-4 top-4 z-50 grid h-11 w-11 place-items-center rounded-full border border-border bg-card/70 text-foreground/80 backdrop-blur-md transition-all hover:scale-105 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring md:right-6 md:top-6"
+    >
+      <svg
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden
+      >
+        <path d="M11 5 6 9H3v6h3l5 4z" />
+        {on ? (
+          <>
+            <path d="M15.5 8.5a5 5 0 0 1 0 7" />
+            <path d="M18.5 5.5a9 9 0 0 1 0 13" />
+          </>
+        ) : (
+          <>
+            <path d="M22 9l-6 6" />
+            <path d="M16 9l6 6" />
+          </>
+        )}
+      </svg>
+    </button>
+  );
+}
+
 /* ---------------- Main experience ---------------- */
 
 export function BirthdayExperience() {
   const [stage, setStage] = useState<Stage>("unveiling");
   const [burst, setBurst] = useState(0);
+  const [giftOpening, setGiftOpening] = useState(false);
   const [typed, setTyped] = useState(0);
   const [showMessage, setShowMessage] = useState(false);
   const [wish, setWish] = useState("");
-  const [wishSent, setWishSent] = useState(false);
-  const [blown, setBlown] = useState(false);
+  const [cakePhase, setCakePhase] = useState<CakePhase>("writing");
+  const [flash, setFlash] = useState(false);
+  const [leaving, setLeaving] = useState(false);
+  const [gust, setGust] = useState(false);
+  const [musicOn, setMusicOn] = useState(false);
   const songRef = useRef<BirthdaySong | null>(null);
-  const fireworksRef = useFireworks(stage === "revelation" || (stage === "celebration" && wishSent));
+  const fireworksRef = useFireworks(stage === "revelation");
 
   useEffect(() => {
     return () => songRef.current?.stop();
@@ -251,51 +286,118 @@ export function BirthdayExperience() {
   }, [stage, typed]);
 
   const openGift = useCallback(() => {
+    if (giftOpening) return;
     setBurst((n) => n + 1);
-    window.setTimeout(() => setStage("question"), 550);
-  }, []);
+    setGiftOpening(true);
+  }, [giftOpening]);
+
+  useEffect(() => {
+    if (!giftOpening) return;
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    // Chờ nắp và nơ nhấc lên trước khi chuyển sang lời mời bật nhạc.
+    const next = window.setTimeout(() => setStage("question"), reduced ? 0 : 1100);
+    return () => window.clearTimeout(next);
+  }, [giftOpening]);
 
   const answer = useCallback((withMusic: boolean) => {
     if (withMusic) {
       songRef.current = new BirthdaySong();
       songRef.current.start(true);
+      setMusicOn(true);
     }
     setStage("revelation");
   }, []);
 
+  // Nút này bật được cả khi người dùng lỡ chọn "Không" — click là một cử chỉ
+  // của người dùng nên trình duyệt cho phép tạo AudioContext ngay tại đây.
+  const toggleMusic = useCallback(() => {
+    const next = !musicOn;
+    if (next) {
+      if (songRef.current) {
+        songRef.current.setMuted(false);
+      } else {
+        songRef.current = new BirthdaySong();
+        songRef.current.start(true);
+      }
+    } else {
+      songRef.current?.setMuted(true);
+    }
+    setMusicOn(next);
+  }, [musicOn]);
+
+  // Chỉ giữ trạng thái đã gửi; bỏ nội dung riêng tư ngay trong lần cập nhật này.
   const sendWish = useCallback(() => {
-    if (!wish.trim() || wishSent) return;
-    setWishSent(true);
-    setBlown(true);
-  }, [wish, wishSent]);
+    if (cakePhase !== "writing" || !wish.trim()) return;
+    setWish("");
+    setCakePhase("readyToBlow");
+  }, [cakePhase, wish]);
+
+  // Chỉ thổi được sau khi đã gửi điều ước, và chặn click lặp lại.
+  const blowCandles = useCallback(() => {
+    if (cakePhase !== "readyToBlow") return;
+    setCakePhase("blowing");
+    setFlash(true);
+    setGust(true);
+  }, [cakePhase]);
+
+  // Giữ bánh + khói ~1,4s cho người dùng kịp thấy nến tắt, rồi mới dissolve sang màn hoa.
+  useEffect(() => {
+    if (cakePhase !== "blowing") return;
+    const unflash = window.setTimeout(() => setFlash(false), 320);
+    const leave = window.setTimeout(() => setLeaving(true), 900);
+    const next = window.setTimeout(() => {
+      setLeaving(false);
+      setStage("wishCelebration");
+    }, 1450);
+    return () => {
+      window.clearTimeout(unflash);
+      window.clearTimeout(leave);
+      window.clearTimeout(next);
+    };
+  }, [cakePhase]);
+
+  // Đợt cánh bung chạy xuyên qua lúc chuyển màn; xong thì gỡ khỏi trang.
+  useEffect(() => {
+    if (!gust) return;
+    const t = window.setTimeout(() => setGust(false), 4200);
+    return () => window.clearTimeout(t);
+  }, [gust]);
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-background text-foreground">
-      {/* ambient glow */}
-      <div className="pointer-events-none absolute inset-0" aria-hidden>
-        <div className="absolute -top-32 left-1/2 h-96 w-[42rem] -translate-x-1/2 rounded-full bg-glow opacity-60 blur-3xl" />
-        <div className="absolute bottom-0 left-1/4 h-72 w-72 rounded-full bg-glow-rose opacity-50 blur-3xl" />
-        <div className="absolute right-1/4 top-1/3 h-64 w-64 rounded-full bg-glow-gold opacity-40 blur-3xl" />
-      </div>
+      {/* bầu trời sao + quầng sáng nền */}
+      <NightSky
+        calm={stage === "letter"}
+        focused={stage === "celebration"}
+        dimmed={stage === "celebration"}
+      />
+
+      {stage !== "unveiling" && stage !== "question" && (
+        <MusicToggle on={musicOn} onToggle={toggleMusic} />
+      )}
 
       {/* ---------- Stage 1: The Unveiling ---------- */}
       {stage === "unveiling" && (
-        <section className="relative z-10 flex min-h-screen flex-col items-center justify-center px-6 text-center">
-          <p className="fade-in mb-8 text-sm uppercase tracking-[0.35em] text-muted-foreground">
-            Có một điều bất ngờ dành cho bạn…
+        <section className="gift-scene sky-focus-content relative z-10 flex min-h-screen flex-col items-center justify-center px-6 py-16 text-center">
+          <p className="stationery-eyebrow fade-in">Một chút bất ngờ</p>
+          <h1 className="stationery-title fade-in">Có một món quà cho bạn.</h1>
+          <p className="stationery-subtitle fade-in">
+            Một ngày đặc biệt, dành cho một người đặc biệt.
           </p>
           <button
             type="button"
             onClick={openGift}
-            className="group relative cursor-pointer outline-none transition-transform duration-300 hover:scale-110 focus-visible:scale-110"
+            disabled={giftOpening}
+            className={`gift-hit ${giftOpening ? "is-open" : ""}`}
             aria-label="Mở hộp quà"
+            aria-busy={giftOpening}
           >
-            <span className="gift-pulse block blur-[2px] transition-all duration-500 group-hover:blur-0">
-              <GiftBox />
-            </span>
+            <GiftBox name={SHORT_NAME} />
             <SparkleBurst trigger={burst} />
           </button>
-          <p className="fade-in mt-10 text-muted-foreground">Chạm vào hộp quà để mở màn ✨</p>
+          <p className="stationery-hint fade-in" aria-live="polite">
+            {giftOpening ? "Đang mở món quà dành cho bạn…" : "Chạm vào hộp quà để mở"}
+          </p>
         </section>
       )}
 
@@ -330,7 +432,11 @@ export function BirthdayExperience() {
       {/* ---------- Stage 2: The Revelation ---------- */}
       {stage === "revelation" && (
         <section className="relative z-10 flex min-h-screen flex-col items-center justify-center px-6 text-center">
-          <canvas ref={fireworksRef} className="pointer-events-none fixed inset-0 h-full w-full" aria-hidden />
+          <canvas
+            ref={fireworksRef}
+            className="pointer-events-none fixed inset-0 h-full w-full"
+            aria-hidden
+          />
           <Balloons />
           <Confetti />
           <h1 className="font-display relative z-10 max-w-4xl text-4xl leading-tight text-primary drop-shadow-[0_0_24px_color-mix(in_oklab,var(--gold)_45%,transparent)] md:text-6xl">
@@ -340,8 +446,8 @@ export function BirthdayExperience() {
           {showMessage && (
             <div className="rise-in relative z-10 mt-10 max-w-xl space-y-4">
               <p className="text-lg leading-relaxed text-foreground/90 md:text-xl">
-                Chúc {NAME} một tuổi mới thật nhiều sức khỏe, niềm vui và may mắn.
-                Mong rằng mọi điều tốt đẹp nhất sẽ luôn đến với bạn — hôm nay, ngày mai và mãi mãi. 💖
+                Chúc {NAME} một tuổi mới thật nhiều sức khỏe, niềm vui và may mắn. Mong rằng mọi
+                điều tốt đẹp nhất sẽ luôn đến với bạn — hôm nay, ngày mai và mãi mãi. 💖
               </p>
               <p className="text-muted-foreground">
                 Cảm ơn bạn vì đã luôn tỏa sáng theo cách rất riêng của mình.
@@ -360,16 +466,29 @@ export function BirthdayExperience() {
 
       {/* ---------- Stage 3: The Celebration ---------- */}
       {stage === "celebration" && (
-        <section className="relative z-10 flex min-h-screen flex-col items-center justify-center px-6 py-16 text-center">
-          {wishSent && <canvas ref={fireworksRef} className="pointer-events-none fixed inset-0 h-full w-full" aria-hidden />}
+        <section
+          className={`sky-focus-content relative z-10 flex min-h-screen flex-col items-center justify-center px-6 py-16 text-center ${
+            leaving ? "stage-leave" : ""
+          }`}
+        >
           <h2 className="font-display rise-in text-3xl text-primary md:text-4xl">
-            {blown ? "Chúc mừng! Nến đã tắt 🎉" : "Hãy nhắm mắt và ước một điều nhé"}
+            {cakePhase === "writing"
+              ? "Hãy nhắm mắt và ước một điều nhé"
+              : cakePhase === "readyToBlow"
+                ? "Điều ước đã sẵn sàng ✨"
+                : "Điều ước đã được gửi đi 💫"}
           </h2>
+
           <div className="rise-in mt-8">
-            <Cake blown={blown} />
+            <Cake
+              blown={cakePhase === "blowing"}
+              interactive={cakePhase === "readyToBlow"}
+              flash={flash}
+              onBlow={blowCandles}
+            />
           </div>
 
-          {!wishSent ? (
+          {cakePhase === "writing" ? (
             <form
               className="rise-in mt-8 flex w-full max-w-md flex-col items-center gap-4"
               onSubmit={(e) => {
@@ -383,9 +502,18 @@ export function BirthdayExperience() {
                 onChange={(e) => setWish(e.target.value)}
                 placeholder="Ước một điều nào!"
                 maxLength={120}
+                autoComplete="off"
                 className="w-full rounded-full border border-border bg-card/80 px-6 py-3 text-center text-foreground placeholder:text-muted-foreground focus:border-ring focus:outline-none"
                 aria-label="Nhập điều ước của bạn"
+                aria-describedby="wish-privacy-note"
               />
+              <p
+                id="wish-privacy-note"
+                className="flex max-w-sm items-start justify-center gap-2 text-xs leading-relaxed text-foreground/70"
+              >
+                <LockKeyhole className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                <span>Chỉ dành riêng cho bạn — điều ước sẽ được ẩn sau khi gửi.</span>
+              </p>
               <button
                 type="submit"
                 disabled={!wish.trim()}
@@ -395,33 +523,56 @@ export function BirthdayExperience() {
               </button>
             </form>
           ) : (
-            <div className="rise-in mt-8 max-w-xl space-y-6">
-              <p className="text-xl font-medium text-foreground">
-                Điều ước của bạn đã được gửi đến vũ trụ! ✨
+            <div className="rise-in mt-8 max-w-md space-y-3">
+              <p className="text-foreground/90" role="status">
+                Điều ước của bạn đã được giữ kín ✨
               </p>
-              {/* falling petals */}
-              <div className="pointer-events-none fixed inset-0 overflow-hidden" aria-hidden>
-                {Array.from({ length: 24 }, (_, i) => (
-                  <span
-                    key={i}
-                    className="petal"
-                    style={{
-                      left: `${Math.random() * 100}%`,
-                      animationDelay: `${Math.random() * 2.5}s`,
-                      animationDuration: `${4 + Math.random() * 4}s`,
-                    }}
-                  />
-                ))}
-              </div>
-              <div className="rounded-3xl border border-border bg-card/70 p-6 backdrop-blur-sm">
-                <p className="font-display text-lg italic leading-relaxed text-card-foreground">
-                  “Tuổi mới không chỉ là thêm một con số, mà là thêm một chặng đường để hạnh phúc.
-                  Chúc {NAME} luôn cười thật tươi, sống thật rực rỡ và được yêu thương thật nhiều.”
+              {cakePhase === "readyToBlow" && (
+                <p className="tap-hint text-lg font-medium text-primary">
+                  👆 Chạm vào bánh để thổi tắt nến nhé
                 </p>
-              </div>
-              <p className="text-sm text-muted-foreground">Sinh nhật vui vẻ nhé, {NAME}! 🎈</p>
+              )}
             </div>
           )}
+        </section>
+      )}
+
+      {/* ---------- Stage 3b: Wish celebration (hoa phượng) ---------- */}
+      {stage === "wishCelebration" && (
+        <section className="relative z-10 flex min-h-screen flex-col items-center justify-center px-6 py-16 text-center">
+          <Petals />
+          <PhuongBranch variant="corner" className="phuong-corner" />
+          <div className="rise-in relative z-10 max-w-xl space-y-6">
+            <PhuongBloomIcon className="mx-auto h-11 w-11" />
+            <h2 className="font-display text-3xl leading-snug text-primary md:text-4xl">
+              Mong điều ước của {SHORT_NAME} sẽ trở thành hiện thực
+            </h2>
+            <p className="text-lg text-foreground/85">
+              Và mong tuổi mới sẽ luôn rực rỡ như mùa hoa phượng
+            </p>
+            <div className="rounded-3xl border border-border bg-card/70 p-6 backdrop-blur-sm">
+              <p className="font-display text-lg italic leading-relaxed text-card-foreground">
+                “Tuổi mới không chỉ là thêm một con số, mà là thêm một chặng đường để hạnh phúc.
+                Chúc {NAME} luôn cười thật tươi, sống thật rực rỡ và được yêu thương thật nhiều.”
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setStage("letter")}
+              className="rounded-full bg-primary px-8 py-3 font-semibold text-primary-foreground shadow-lg transition-all hover:scale-105 hover:brightness-110"
+            >
+              Mình còn một điều muốn gửi bạn 💌
+            </button>
+          </div>
+        </section>
+      )}
+
+      {gust && <PetalGust />}
+
+      {/* ---------- Stage 4: The Letter ---------- */}
+      {stage === "letter" && (
+        <section className="relative z-10 flex min-h-screen flex-col items-center justify-center px-6 py-16 text-center">
+          <Letter name={SHORT_NAME} />
         </section>
       )}
     </main>
