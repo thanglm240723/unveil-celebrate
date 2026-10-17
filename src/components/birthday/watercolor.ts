@@ -91,7 +91,7 @@ const SPLAT: Array<[number, number, number, string, number]> = [
 
 function paintFilter(
   id: string,
-  seed: number,
+  _seed: number,
   o: {
     freq?: number;
     disp?: number;
@@ -101,59 +101,28 @@ function paintFilter(
     halo?: number;
   } = {},
 ) {
-  const {
-    freq = 0.06,
-    disp = 5.5,
-    rim = [0.62, 0.5, 0.5],
-    rimA = 1.5,
-    rimBlur = 2.2,
-    halo = 0.36,
-  } = o;
-  return `<filter id="${id}" x="-25%" y="-25%" width="150%" height="150%" color-interpolation-filters="sRGB">
-<feTurbulence type="fractalNoise" baseFrequency="${freq}" numOctaves="3" seed="${seed}" result="n"/>
-<feDisplacementMap in="SourceGraphic" in2="n" scale="${disp}" xChannelSelector="R" yChannelSelector="G" result="d"/>
-<feGaussianBlur in="d" stdDeviation="${rimBlur}" result="b"/>
-<feComposite in="d" in2="b" operator="out" result="e"/>
-<feComponentTransfer in="e" result="rim"><feFuncR type="linear" slope="${rim[0]}"/><feFuncG type="linear" slope="${rim[1]}"/><feFuncB type="linear" slope="${rim[2]}"/><feFuncA type="linear" slope="${rimA}"/></feComponentTransfer>
-<feTurbulence type="fractalNoise" baseFrequency="0.72" numOctaves="2" seed="${seed + 40}" result="g"/>
-<feColorMatrix in="g" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1.9 -1" result="ga"/>
-<feComponentTransfer in="d" result="dk"><feFuncR type="linear" slope="0.72"/><feFuncG type="linear" slope="0.6"/><feFuncB type="linear" slope="0.6"/></feComponentTransfer>
-<feComposite in="dk" in2="ga" operator="in" result="gr"/>
-<feGaussianBlur in="d" stdDeviation="3.4" result="hb"/>
-<feComponentTransfer in="hb" result="halo"><feFuncA type="linear" slope="${halo}"/></feComponentTransfer>
-<feMerge><feMergeNode in="halo"/><feMergeNode in="d"/><feMergeNode in="gr"/><feMergeNode in="rim"/></feMerge>
+  const { rimBlur = 1.4, halo = 0.28 } = o;
+  return `<filter id="${id}" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">
+<feGaussianBlur in="SourceGraphic" stdDeviation="${rimBlur}" result="b"/>
+<feComponentTransfer in="b" result="halo"><feFuncA type="linear" slope="${halo}"/></feComponentTransfer>
+<feMerge><feMergeNode in="halo"/><feMergeNode in="SourceGraphic"/></feMerge>
 </filter>`;
 }
 
-function leafFilter(id: string, seed: number) {
-  return `<filter id="${id}" x="-15%" y="-25%" width="130%" height="150%" color-interpolation-filters="sRGB">
-<feTurbulence type="fractalNoise" baseFrequency="0.08" numOctaves="2" seed="${seed}" result="n"/>
-<feDisplacementMap in="SourceGraphic" in2="n" scale="3.6" xChannelSelector="R" yChannelSelector="G" result="d"/>
-<feGaussianBlur in="d" stdDeviation="1.4" result="b"/>
-<feComposite in="d" in2="b" operator="out" result="e"/>
-<feComponentTransfer in="e" result="rim"><feFuncR type="linear" slope="0.55"/><feFuncG type="linear" slope="0.66"/><feFuncB type="linear" slope="0.58"/><feFuncA type="linear" slope="1.2"/></feComponentTransfer>
-<feGaussianBlur in="d" stdDeviation="2.8" result="hb"/>
-<feComponentTransfer in="hb" result="halo"><feFuncA type="linear" slope="0.3"/></feComponentTransfer>
-<feMerge><feMergeNode in="halo"/><feMergeNode in="d"/><feMergeNode in="rim"/></feMerge>
+function leafFilter(id: string, _seed: number) {
+  return `<filter id="${id}" x="-15%" y="-15%" width="130%" height="130%" color-interpolation-filters="sRGB">
+<feGaussianBlur in="SourceGraphic" stdDeviation="0.8" result="b"/>
+<feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
 </filter>`;
 }
 
-/** Mảng màu loang: vẽ khối đặc, hạ độ trong ở nhóm ngoài để tính được viền nước. */
+/** Mảng màu loang: GPU-friendly Gaussian blur, mượt mà trên mọi thiết bị di động */
 export function washFilter(
   id: string,
   o: { seed: number; freq: number; disp: number; blur: number },
 ) {
-  return `<filter id="${id}" x="-40%" y="-40%" width="180%" height="180%" color-interpolation-filters="sRGB">
-<feTurbulence type="fractalNoise" baseFrequency="${o.freq}" numOctaves="4" seed="${o.seed}" result="n"/>
-<feDisplacementMap in="SourceGraphic" in2="n" scale="${o.disp}" xChannelSelector="R" yChannelSelector="B" result="d"/>
-<feGaussianBlur in="d" stdDeviation="${o.blur}" result="s"/>
-<feGaussianBlur in="d" stdDeviation="${n1(o.blur * 0.22)}" result="s2"/>
-<feComposite in="s2" in2="s" operator="out" result="e"/>
-<feComponentTransfer in="e" result="rim"><feFuncR type="linear" slope="1.3"/><feFuncG type="linear" slope="1.22"/><feFuncB type="linear" slope="1.15"/><feFuncA type="linear" slope="0.8"/></feComponentTransfer>
-<feTurbulence type="fractalNoise" baseFrequency="${Math.round(o.freq * 320) / 100}" numOctaves="3" seed="${o.seed + 7}" result="m"/>
-<feColorMatrix in="m" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1.5 -0.15" result="ma"/>
-<feComposite in="s" in2="ma" operator="in" result="bl"/>
-<feMerge><feMergeNode in="bl"/><feMergeNode in="rim"/></feMerge>
+  return `<filter id="${id}" x="-30%" y="-30%" width="160%" height="160%" color-interpolation-filters="sRGB">
+<feGaussianBlur in="SourceGraphic" stdDeviation="${Math.max(o.blur, 24)}" result="s"/>
 </filter>`;
 }
 
@@ -199,16 +168,10 @@ ${paintFilter(`${p}-fPaintF`, 61, { rim: [0.95, 0.66, 0.46], rimA: 1.3, halo: 0.
 ${paintFilter(`${p}-fBud`, 71, { freq: 0.09, disp: 2.6, rimBlur: 1.1, rimA: 1.1, halo: 0.3 })}
 ${leafFilter(`${p}-fLeafA`, 5)}
 ${leafFilter(`${p}-fLeafB`, 23)}
-<filter id="${p}-fLine" x="-20%" y="-20%" width="140%" height="140%"><feTurbulence type="fractalNoise" baseFrequency="0.1" numOctaves="2" seed="13" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2" xChannelSelector="R" yChannelSelector="G"/></filter>
+<filter id="${p}-fLine" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur in="SourceGraphic" stdDeviation="0.4"/></filter>
 <filter id="${p}-fBranch" x="-8%" y="-12%" width="116%" height="124%" color-interpolation-filters="sRGB">
-<feTurbulence type="fractalNoise" baseFrequency="0.05" numOctaves="2" seed="31" result="n"/>
-<feDisplacementMap in="SourceGraphic" in2="n" scale="3" xChannelSelector="R" yChannelSelector="G" result="d"/>
-<feTurbulence type="fractalNoise" baseFrequency="0.9 0.22" numOctaves="2" seed="4" result="t"/>
-<feColorMatrix in="t" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -2.4 1.9" result="ta"/>
-<feComposite in="d" in2="ta" operator="in" result="dry"/>
-<feGaussianBlur in="d" stdDeviation="1.8" result="hb"/>
-<feComponentTransfer in="hb" result="halo"><feFuncA type="linear" slope="0.25"/></feComponentTransfer>
-<feMerge><feMergeNode in="halo"/><feMergeNode in="dry"/></feMerge>
+<feGaussianBlur in="SourceGraphic" stdDeviation="0.8" result="b"/>
+<feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
 </filter>
 ${washFilter(`${p}-fWashS`, { seed: 41, freq: 0.02, disp: 46, blur: 10 })}
 ${blur("fBlurS", 0.45)}

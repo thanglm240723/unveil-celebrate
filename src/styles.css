@@ -273,6 +273,8 @@
   z-index: 0;
   overflow: hidden;
   pointer-events: none;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
 }
 
 .petal {
@@ -281,6 +283,10 @@
   position: absolute;
   top: 0;
   overflow: visible;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
   will-change: transform;
   animation-name: petal-fall;
   animation-timing-function: linear;
@@ -327,6 +333,9 @@
   pointer-events: none;
   transform-origin: 100% 30%;
   animation: phuong-sway 7s ease-in-out infinite;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  will-change: transform;
 }
 
 @media (max-width: 640px) {
@@ -428,7 +437,13 @@
   );
 }
 
-.neb { position: absolute; }
+.neb {
+  position: absolute;
+  pointer-events: none;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  will-change: transform;
+}
 
 /* ba khối quầng sáng của theme — dựng bằng background-image, vì
    background-color không nhận gradient và bị trình duyệt bỏ luôn */
@@ -439,7 +454,7 @@
   height: 24rem;
   margin-left: -21rem;
   opacity: 0.6;
-  filter: blur(46px);
+  filter: blur(28px);
   background-image: var(--glow);
 }
 .neb-rose {
@@ -449,7 +464,7 @@
   height: 18rem;
   margin-left: -9rem;
   opacity: 0.5;
-  filter: blur(46px);
+  filter: blur(28px);
   background-image: var(--glow-rose);
 }
 .neb-gold {
@@ -459,7 +474,7 @@
   height: 16rem;
   margin-right: -8rem;
   opacity: 0.4;
-  filter: blur(46px);
+  filter: blur(28px);
   background-image: var(--glow-gold);
 }
 .milky-way {
@@ -468,8 +483,8 @@
   width: 130%;
   height: 190px;
   opacity: 0.5;
-  filter: blur(34px);
-  transform: rotate(-19deg);
+  filter: blur(24px);
+  transform: rotate(-19deg) translateZ(0);
   background-image: linear-gradient(180deg, transparent, oklch(0.55 0.07 295 / 26%) 45%, transparent);
 }
 @media (min-width: 768px) {
@@ -564,7 +579,14 @@
 .night-sky.is-calm .sky-wash { opacity: 0.6; }
 .night-sky.is-dimmed .sky-wash { opacity: 0.45; }
 
-.star { position: absolute; border-radius: 9999px; }
+.star {
+  position: absolute;
+  border-radius: 9999px;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  contain: strict;
+  will-change: opacity;
+}
 .tw { animation-timing-function: ease-in-out; animation-iteration-count: infinite; }
 .tw-a { animation-name: twinkle-a; }
 .tw-b { animation-name: twinkle-b; }

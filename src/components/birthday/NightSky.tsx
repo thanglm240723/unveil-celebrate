@@ -165,8 +165,8 @@ function buildSparks(seed: number): Array<Spark> {
   }));
 }
 
-const STARS = buildStars(260, 20260906, 150);
-const METEORS = buildMeteors(11, 5150, 8);
+const STARS = buildStars(140, 20260906, 65);
+const METEORS = buildMeteors(6, 5150, 3);
 const SPARKS = buildSparks(77);
 
 /**
