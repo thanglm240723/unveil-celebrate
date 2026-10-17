@@ -9,7 +9,8 @@ import { BirthdaySong } from "@/lib/birthday-music";
 
 const NAME = "Nguyễn Thị Phượng";
 const SHORT_NAME = "Phượng";
-const HEADLINE = `CHÚC MỪNG SINH NHẬT ${NAME.toUpperCase()}!`;
+const HEADLINE = `CHÚC MỪNG SINH NHẬT ${NAME.toUpperCase()} 🎂`;
+const HEADLINE_CHARS = Array.from(HEADLINE);
 
 type Stage = "unveiling" | "question" | "revelation" | "celebration" | "wishCelebration";
 
@@ -276,7 +277,7 @@ export function BirthdayExperience() {
   // Typewriter for the headline
   useEffect(() => {
     if (stage !== "revelation") return;
-    if (typed >= HEADLINE.length) {
+    if (typed >= HEADLINE_CHARS.length) {
       const t = window.setTimeout(() => setShowMessage(true), 500);
       return () => window.clearTimeout(t);
     }
@@ -438,7 +439,7 @@ export function BirthdayExperience() {
           <Balloons />
           <Confetti />
           <h1 className="font-display relative z-10 max-w-4xl text-4xl leading-tight text-primary drop-shadow-[0_0_24px_color-mix(in_oklab,var(--gold)_45%,transparent)] md:text-6xl">
-            {HEADLINE.slice(0, typed)}
+            {HEADLINE_CHARS.slice(0, typed).join("")}
             <span className="caret" aria-hidden />
           </h1>
           {showMessage && (
