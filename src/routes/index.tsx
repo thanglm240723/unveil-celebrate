@@ -5,16 +5,15 @@ import { BirthdayExperience } from "@/components/birthday/BirthdayExperience";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Chúc Mừng Sinh Nhật Nguyễn Thị Phượng!" },
+      { title: "Chúc Mừng Sinh Nhật! 🎂" },
       {
         name: "description",
-        content:
-          "Một bất ngờ sinh nhật dành riêng cho Nguyễn Thị Phượng — pháo hoa, bóng bay, bánh kem và một điều ước gửi đến vũ trụ.",
+        content: "Có một món quà bất ngờ dành riêng cho bạn. Chạm vào để mở nhé! ✨",
       },
-      { property: "og:title", content: "Chúc Mừng Sinh Nhật Nguyễn Thị Phượng!" },
+      { property: "og:title", content: "Chúc Mừng Sinh Nhật! 🎂" },
       {
         property: "og:description",
-        content: "Mở hộp quà và khám phá bất ngờ sinh nhật dành riêng cho bạn!",
+        content: "Có một món quà bất ngờ dành riêng cho bạn. Chạm vào để mở nhé! ✨",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

@@ -77,16 +77,16 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Chúc Mừng Sinh Nhật Nguyễn Thị Phượng!" },
+      { title: "Chúc Mừng Sinh Nhật! 🎂" },
       {
         name: "description",
-        content: "Một bất ngờ sinh nhật dành riêng cho Nguyễn Thị Phượng.",
+        content: "Có một món quà bất ngờ dành riêng cho bạn. Chạm vào để mở nhé! ✨",
       },
       { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Chúc Mừng Sinh Nhật Nguyễn Thị Phượng!" },
+      { property: "og:title", content: "Chúc Mừng Sinh Nhật! 🎂" },
       {
         property: "og:description",
-        content: "Một bất ngờ sinh nhật dành riêng cho Nguyễn Thị Phượng.",
+        content: "Có một món quà bất ngờ dành riêng cho bạn. Chạm vào để mở nhé! ✨",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
