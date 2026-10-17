@@ -329,6 +329,15 @@
   animation: phuong-sway 7s ease-in-out infinite;
 }
 
+@media (max-width: 640px) {
+  .phuong-corner {
+    width: clamp(9rem, 42vw, 14rem);
+    opacity: 0.6;
+    top: -0.5rem;
+    right: -0.5rem;
+  }
+}
+
 /* ---------- Bánh bấm được ---------- */
 
 @keyframes cake-hint {

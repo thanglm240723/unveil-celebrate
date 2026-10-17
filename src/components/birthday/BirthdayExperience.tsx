@@ -2,7 +2,6 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { LockKeyhole } from "lucide-react";
 import { Cake } from "./Cake";
 import { GiftBox } from "./GiftBox";
-import { Letter } from "./Letter";
 import { NightSky } from "./NightSky";
 import { PetalGust, Petals } from "./Petals";
 import { PhuongBloomIcon, PhuongBranch } from "./PhuongBranch";
@@ -12,7 +11,7 @@ const NAME = "Nguyễn Thị Phượng";
 const SHORT_NAME = "Phượng";
 const HEADLINE = `CHÚC MỪNG SINH NHẬT ${NAME.toUpperCase()}!`;
 
-type Stage = "unveiling" | "question" | "revelation" | "celebration" | "wishCelebration" | "letter";
+type Stage = "unveiling" | "question" | "revelation" | "celebration" | "wishCelebration";
 
 /** Các bước trong màn bánh: gõ điều ước → chờ chạm bánh → nến vừa tắt. */
 type CakePhase = "writing" | "readyToBlow" | "blowing";
@@ -367,7 +366,6 @@ export function BirthdayExperience() {
     <main className="relative min-h-screen overflow-hidden bg-background text-foreground">
       {/* bầu trời sao + quầng sáng nền */}
       <NightSky
-        calm={stage === "letter"}
         focused={stage === "celebration"}
         dimmed={stage === "celebration"}
       />
@@ -382,7 +380,7 @@ export function BirthdayExperience() {
           <p className="stationery-eyebrow fade-in">Một chút bất ngờ</p>
           <h1 className="stationery-title fade-in">Có một món quà cho bạn.</h1>
           <p className="stationery-subtitle fade-in">
-            Một ngày đặc biệt, dành cho một người đặc biệt.
+            Hôm nay là ngày đặc biệt của {NAME}, và những vì sao trên bầu trời hôm nay cũng sẽ luôn dõi theo bạn. ✨
           </p>
           <button
             type="button"
@@ -407,7 +405,7 @@ export function BirthdayExperience() {
           <div className="pop-in w-full max-w-md rounded-3xl border border-border bg-card/80 p-8 text-center shadow-2xl backdrop-blur-md">
             <div className="mb-4 text-4xl">🎵</div>
             <h1 className="font-display text-xl leading-relaxed text-card-foreground md:text-2xl">
-              Hôm nay là một ngày đặc biệt! Bạn có muốn bật một bản nhạc chúc mừng sinh nhật không?
+              Bạn có muốn bật một bản nhạc chúc mừng sinh nhật không?
             </h1>
             <div className="mt-8 flex justify-center gap-4">
               <button
@@ -449,9 +447,6 @@ export function BirthdayExperience() {
                 Chúc {NAME} một tuổi mới thật nhiều sức khỏe, niềm vui và may mắn. Mong rằng mọi
                 điều tốt đẹp nhất sẽ luôn đến với bạn — hôm nay, ngày mai và mãi mãi. 💖
               </p>
-              <p className="text-muted-foreground">
-                Cảm ơn bạn vì đã luôn tỏa sáng theo cách rất riêng của mình.
-              </p>
               <button
                 type="button"
                 onClick={() => setStage("celebration")}
@@ -467,9 +462,8 @@ export function BirthdayExperience() {
       {/* ---------- Stage 3: The Celebration ---------- */}
       {stage === "celebration" && (
         <section
-          className={`sky-focus-content relative z-10 flex min-h-screen flex-col items-center justify-center px-6 py-16 text-center ${
-            leaving ? "stage-leave" : ""
-          }`}
+          className={`sky-focus-content relative z-10 flex min-h-screen flex-col items-center justify-center px-6 py-16 text-center ${leaving ? "stage-leave" : ""
+            }`}
         >
           <h2 className="font-display rise-in text-3xl text-primary md:text-4xl">
             {cakePhase === "writing"
@@ -539,42 +533,44 @@ export function BirthdayExperience() {
 
       {/* ---------- Stage 3b: Wish celebration (hoa phượng) ---------- */}
       {stage === "wishCelebration" && (
-        <section className="relative z-10 flex min-h-screen flex-col items-center justify-center px-6 py-16 text-center">
+        <section className="relative z-10 flex min-h-screen flex-col items-center justify-center px-4 py-8 md:px-6 md:py-16 text-center">
           <Petals />
           <PhuongBranch variant="corner" className="phuong-corner" />
-          <div className="rise-in relative z-10 max-w-xl space-y-6">
-            <PhuongBloomIcon className="mx-auto h-11 w-11" />
-            <h2 className="font-display text-3xl leading-snug text-primary md:text-4xl">
-              Mong điều ước của {SHORT_NAME} sẽ trở thành hiện thực
-            </h2>
-            <p className="text-lg text-foreground/85">
-              Và mong tuổi mới sẽ luôn rực rỡ như mùa hoa phượng
-            </p>
-            <div className="rounded-3xl border border-border bg-card/70 p-6 backdrop-blur-sm">
-              <p className="font-display text-lg italic leading-relaxed text-card-foreground">
-                “Tuổi mới không chỉ là thêm một con số, mà là thêm một chặng đường để hạnh phúc.
-                Chúc {NAME} luôn cười thật tươi, sống thật rực rỡ và được yêu thương thật nhiều.”
+          <div className="rise-in relative z-10 w-full max-w-xl space-y-4 md:space-y-6">
+            <PhuongBloomIcon className="mx-auto h-9 w-9 md:h-11 md:w-11" />
+            <div className="space-y-1.5 md:space-y-2">
+              <h2 className="font-display text-2xl md:text-4xl leading-snug text-primary">
+                Mong điều ước của {SHORT_NAME} sẽ trở thành hiện thực
+              </h2>
+              <p className="text-sm md:text-base text-foreground/85">
+                Và mong tuổi mới sẽ luôn rực rỡ như mùa hoa phượng
               </p>
             </div>
-            <button
-              type="button"
-              onClick={() => setStage("letter")}
-              className="rounded-full bg-primary px-8 py-3 font-semibold text-primary-foreground shadow-lg transition-all hover:scale-105 hover:brightness-110"
-            >
-              Mình còn một điều muốn gửi bạn 💌
-            </button>
+            <div className="rounded-3xl border border-border bg-card/75 p-5 md:p-8 backdrop-blur-md shadow-2xl">
+              <div className="mb-3 text-xs md:text-sm tracking-widest text-primary/90 select-none" aria-hidden="true">
+                ✨ *•°☆ 🎂 ☆°•* ✨
+              </div>
+              <div className="font-display text-base md:text-lg leading-relaxed text-card-foreground space-y-2.5 md:space-y-3">
+                <p>
+                  “Tuổi mới không chỉ là thêm một con số, mà là thêm một chặng đường để hạnh phúc. 🌷
+                </p>
+                <p>
+                  Chúc <span className="font-semibold text-primary">{NAME}</span> luôn cười thật tươi 🥰, được yêu thương thật nhiều 💖 và gặp những điều tốt đẹp nhất. ✨
+                </p>
+                <p>
+                  Mong rằng cả vũ trụ 🌌 sẽ dịu dàng với bạn, và những điều ước đẹp đẽ nhất rồi sẽ trở thành hiện thực. ⭐”
+                </p>
+              </div>
+              <div className="mt-3.5 text-xs md:text-sm tracking-widest text-primary/90 select-none" aria-hidden="true">
+                🌟 💫 🌷 💫 🌟
+              </div>
+            </div>
+            {/* Ẩn phần bức thư: kết thúc trọn vẹn tại màn hoa phượng chúc phúc */}
           </div>
         </section>
       )}
 
       {gust && <PetalGust />}
-
-      {/* ---------- Stage 4: The Letter ---------- */}
-      {stage === "letter" && (
-        <section className="relative z-10 flex min-h-screen flex-col items-center justify-center px-6 py-16 text-center">
-          <Letter name={SHORT_NAME} />
-        </section>
-      )}
     </main>
   );
 }
