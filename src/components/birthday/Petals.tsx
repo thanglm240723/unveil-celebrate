@@ -6,14 +6,14 @@ import { PETAL_KINDS, PETAL_VIEWBOX, wcDefs } from "./watercolor";
  * một <svg> nhỏ trỏ vào đây. Hai lớp cánh (rơi nhẹ, gió cuốn) có thể cùng hiện
  * lúc chuyển màn nên mỗi lớp mang tiền tố riêng.
  */
-function SharedDefs({ p }: { p: string }) {
+function SharedDefs({ p, hd = false }: { p: string; hd?: boolean }) {
   return (
     <svg
       width="0"
       height="0"
       className="absolute"
       aria-hidden
-      dangerouslySetInnerHTML={{ __html: `<defs>${wcDefs(p)}</defs>` }}
+      dangerouslySetInnerHTML={{ __html: `<defs>${wcDefs(p, hd)}</defs>` }}
     />
   );
 }
@@ -73,7 +73,7 @@ function makePetals(count: number, slow: boolean): Array<Petal> {
  * Cánh hoa phượng rơi ở lớp nền. Sinh trong effect chứ không phải lúc render:
  * app chạy SSR nên Math.random() ở thân component sẽ lệch giữa server và client.
  */
-export function Petals() {
+export function Petals({ hd = false }: { hd?: boolean }) {
   const [petals, setPetals] = useState<Array<Petal>>([]);
 
   useEffect(() => {
@@ -85,7 +85,7 @@ export function Petals() {
 
   return (
     <div className="petal-field" aria-hidden>
-      <SharedDefs p="pf" />
+      <SharedDefs p="pf" hd={hd} />
       {petals.map((p, i) => (
         <div
           key={i}
@@ -163,7 +163,7 @@ function makeGust(count: number, w: number, h: number): Array<GustPetal> {
  * xoay, sớm muộn lệch nhau thành một làn sóng, che bước chuyển sang màn hoa.
  * Máy bật "giảm chuyển động" thì không chạy.
  */
-export function PetalGust() {
+export function PetalGust({ hd = false }: { hd?: boolean }) {
   const [petals, setPetals] = useState<Array<GustPetal>>([]);
 
   useEffect(() => {
@@ -176,7 +176,7 @@ export function PetalGust() {
 
   return (
     <div className="petal-gust" aria-hidden>
-      <SharedDefs p="pg" />
+      <SharedDefs p="pg" hd={hd} />
       {petals.map((p, i) => (
         <div
           key={i}

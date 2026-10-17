@@ -165,8 +165,10 @@ function buildSparks(seed: number): Array<Spark> {
   }));
 }
 
-const STARS = buildStars(140, 20260906, 65);
-const METEORS = buildMeteors(6, 5150, 3);
+const STARS_SMOOTH = buildStars(140, 20260906, 65);
+const STARS_HD = buildStars(260, 20260906, 150);
+const METEORS_SMOOTH = buildMeteors(6, 5150, 3);
+const METEORS_HD = buildMeteors(11, 5150, 8);
 const SPARKS = buildSparks(77);
 
 /**
@@ -343,11 +345,20 @@ const WASHES = [
   { cx: 90, cy: 420, rx: 170, ry: 260, c: "#8a3f8f", o: 0.13 },
   { cx: 1060, cy: 300, rx: 150, ry: 150, c: "#e0a55a", o: 0.08 },
 ];
-const WASH_HTML =
-  `<defs>${washFilter("sky-wash", { seed: 9, freq: 0.008, disp: 120, blur: 18 })}</defs>` +
+const WASH_HTML_SMOOTH =
+  `<defs>${washFilter("sky-wash-sm", { seed: 9, freq: 0.008, disp: 120, blur: 18 }, false)}</defs>` +
   WASHES.map(
     (b) =>
-      `<g filter="url(#sky-wash)" opacity="${b.o}"><ellipse cx="${b.cx}" cy="${b.cy}" rx="${b.rx}" ry="${b.ry}" fill="${b.c}"${
+      `<g filter="url(#sky-wash-sm)" opacity="${b.o}"><ellipse cx="${b.cx}" cy="${b.cy}" rx="${b.rx}" ry="${b.ry}" fill="${b.c}"${
+        b.rot ? ` transform="rotate(${b.rot} ${b.cx} ${b.cy})"` : ""
+      }/></g>`,
+  ).join("");
+
+const WASH_HTML_HD =
+  `<defs>${washFilter("sky-wash-hd", { seed: 9, freq: 0.008, disp: 120, blur: 18 }, true)}</defs>` +
+  WASHES.map(
+    (b) =>
+      `<g filter="url(#sky-wash-hd)" opacity="${b.o}"><ellipse cx="${b.cx}" cy="${b.cy}" rx="${b.rx}" ry="${b.ry}" fill="${b.c}"${
         b.rot ? ` transform="rotate(${b.rot} ${b.cx} ${b.cy})"` : ""
       }/></g>`,
   ).join("");
@@ -357,11 +368,17 @@ export const NightSky = memo(function NightSky({
   calm = false,
   focused = false,
   dimmed = false,
+  hd = false,
 }: {
   calm?: boolean;
   focused?: boolean;
   dimmed?: boolean;
+  hd?: boolean;
 }) {
+  const stars = hd ? STARS_HD : STARS_SMOOTH;
+  const meteors = hd ? METEORS_HD : METEORS_SMOOTH;
+  const wash = hd ? WASH_HTML_HD : WASH_HTML_SMOOTH;
+
   return (
     <div
       className={`night-sky ${calm ? "is-calm" : ""} ${focused ? "is-focused" : ""} ${dimmed ? "is-dimmed" : ""}`}
@@ -377,12 +394,12 @@ export const NightSky = memo(function NightSky({
         viewBox="0 0 1440 900"
         preserveAspectRatio="xMidYMid slice"
         aria-hidden
-        dangerouslySetInnerHTML={{ __html: WASH_HTML }}
+        dangerouslySetInnerHTML={{ __html: wash }}
       />
 
       {!calm && <Libra />}
 
-      {STARS.map((s, i) => (
+      {stars.map((s, i) => (
         <div
           key={i}
           className={s.cls}
@@ -412,7 +429,7 @@ export const NightSky = memo(function NightSky({
         </div>
       ))}
 
-      {METEORS.map((m, i) => (
+      {meteors.map((m, i) => (
         <div
           key={i}
           className={m.cls}

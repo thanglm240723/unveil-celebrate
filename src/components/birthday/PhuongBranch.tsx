@@ -15,38 +15,46 @@ const VIEW = {
   envelopeFront: { box: "-300 -260 620 460", id: "pef", art: envelopeFrontArt },
 } as const;
 
-const HTML = Object.fromEntries(
-  Object.entries(VIEW).map(([k, v]) => [k, `<defs>${wcDefs(v.id)}</defs>${v.art(v.id)}`]),
+const HTML_SMOOTH = Object.fromEntries(
+  Object.entries(VIEW).map(([k, v]) => [k, `<defs>${wcDefs(v.id, false)}</defs>${v.art(v.id)}`]),
+) as Record<keyof typeof VIEW, string>;
+
+const HTML_HD = Object.fromEntries(
+  Object.entries(VIEW).map(([k, v]) => [k, `<defs>${wcDefs(v.id, true)}</defs>${v.art(v.id)}`]),
 ) as Record<keyof typeof VIEW, string>;
 
 export const PhuongBranch = memo(function PhuongBranch({
   variant,
   className,
+  hd = false,
 }: {
   variant: keyof typeof VIEW;
   className?: string;
+  hd?: boolean;
 }) {
+  const map = hd ? HTML_HD : HTML_SMOOTH;
   return (
     <svg
       className={className}
       viewBox={VIEW[variant].box}
       aria-hidden
-      dangerouslySetInnerHTML={{ __html: HTML[variant] }}
+      dangerouslySetInnerHTML={{ __html: map[variant] }}
     />
   );
 });
 
-const ICON_HTML = `<defs>${wcDefs("pi")}</defs><use href="#pi-flA" transform="rotate(-8) scale(0.95)"/>`;
+const ICON_HTML_SMOOTH = `<defs>${wcDefs("pi", false)}</defs><use href="#pi-flA" transform="rotate(-8) scale(0.95)"/>`;
+const ICON_HTML_HD = `<defs>${wcDefs("pi", true)}</defs><use href="#pi-flA" transform="rotate(-8) scale(0.95)"/>`;
 
 /** Một bông phượng lẻ, dùng thay icon hoa ở phần chữ. */
-export function PhuongBloomIcon({ className }: { className?: string }) {
+export function PhuongBloomIcon({ className, hd = false }: { className?: string; hd?: boolean }) {
   return (
     <svg
       className={className}
       viewBox="-66 -66 132 132"
       style={{ overflow: "visible" }}
       aria-hidden
-      dangerouslySetInnerHTML={{ __html: ICON_HTML }}
+      dangerouslySetInnerHTML={{ __html: hd ? ICON_HTML_HD : ICON_HTML_SMOOTH }}
     />
   );
 }

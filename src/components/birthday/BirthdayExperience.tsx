@@ -255,7 +255,12 @@ function MusicToggle({ on, onToggle }: { on: boolean; onToggle: () => void }) {
 
 /* ---------------- Main experience ---------------- */
 
-export function BirthdayExperience() {
+export function BirthdayExperience({
+  mode = "smooth",
+}: {
+  mode?: "smooth" | "hd" | undefined;
+}) {
+  const isHd = mode === "hd";
   const [stage, setStage] = useState<Stage>("unveiling");
   const [burst, setBurst] = useState(0);
   const [giftOpening, setGiftOpening] = useState(false);
@@ -369,6 +374,7 @@ export function BirthdayExperience() {
       <NightSky
         focused={stage === "celebration"}
         dimmed={stage === "celebration"}
+        hd={isHd}
       />
 
       {stage !== "unveiling" && stage !== "question" && (
@@ -535,10 +541,10 @@ export function BirthdayExperience() {
       {/* ---------- Stage 3b: Wish celebration (hoa phượng) ---------- */}
       {stage === "wishCelebration" && (
         <section className="relative z-10 flex min-h-screen flex-col items-center justify-center px-4 py-8 md:px-6 md:py-16 text-center">
-          <Petals />
-          <PhuongBranch variant="corner" className="phuong-corner" />
+          <Petals hd={isHd} />
+          <PhuongBranch variant="corner" className="phuong-corner" hd={isHd} />
           <div className="rise-in relative z-10 w-full max-w-xl space-y-4 md:space-y-6">
-            <PhuongBloomIcon className="mx-auto h-9 w-9 md:h-11 md:w-11" />
+            <PhuongBloomIcon className="mx-auto h-9 w-9 md:h-11 md:w-11" hd={isHd} />
             <div className="space-y-1.5 md:space-y-2">
               <h2 className="font-display text-2xl md:text-4xl leading-snug text-primary">
                 Mong điều ước của {SHORT_NAME} sẽ trở thành hiện thực
@@ -571,7 +577,7 @@ export function BirthdayExperience() {
         </section>
       )}
 
-      {gust && <PetalGust />}
+      {gust && <PetalGust hd={isHd} />}
     </main>
   );
 }
